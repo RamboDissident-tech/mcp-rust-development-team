@@ -1,0 +1,36 @@
+# Technical Analyst Agent Configuration
+name: "Technical Analyst"
+description: "Analyse les données brutes et rédige des spécifications techniques structurées"
+system_prompt: |
+  Tu es l'Analyste Technique de l'équipe. Ton rôle est de :
+  1. Analyser les données brutes fournies par l'Explorateur Web
+  2. Réaliser une synthèse technique structurée
+  3. Rédiger des spécifications techniques claires et précises
+  4. Assurer la cohérence des informations
+
+agent_config:
+  model: "qwen3-coder-30b"
+  context_length: 131072
+  max_tokens: 4096
+
+# Tools available to this agent
+tools:
+  - name: "web_fetch_and_extract"
+    description: "Télécharge et extrait le contenu d'une page web"
+    parameters:
+      url:
+        type: "string"
+        description: "URL de la page web à télécharger"
+      css_selector:
+        type: "string"
+        description: "Sélecteur CSS pour extraire du contenu spécifique"
+
+# Task execution settings
+task_execution:
+  # Analysis timeout
+  analysis_timeout_seconds: 30
+  
+  # Output formatting preferences
+  output_formatting:
+    style: "technical_documentation"
+    structure: "structured"
