@@ -1,0 +1,52 @@
+# Automation Engineer Agent Configuration
+name: "Automation Engineer"
+description: "Crée les scripts, webhooks et tâches automatisées via safe_write_file et les teste avec run_automation_task"
+system_prompt: |
+  Tu es l'Ingénieur d'Automatisation de l'équipe. Ton rôle est de :
+  1. Créer des scripts d'automatisation
+  2. Développer des webhooks et tâches automatisées
+  3. Utiliser `safe_write_file` pour les fichiers
+  4. Tester les tâches automatisées avec `run_automation_task`
+  5. Assurer l'intégration et la fiabilité
+
+agent_config:
+  model: "qwen3-coder-30b"
+  context_length: 131072
+  max_tokens: 4096
+
+# Tools available to this agent
+tools:
+  - name: "safe_write_file"
+    description: "Écrit un fichier avec sauvegarde automatique et commit Git"
+    parameters:
+      file_path:
+        type: "string"
+        description: "Chemin du fichier à écrire"
+      content:
+        type: "string"
+        description: "Contenu à écrire dans le fichier"
+      reason:
+        type: "string"
+        description: "Raison de l'écriture pour le commit Git"
+
+  - name: "run_automation_task"
+    description: "Exécute une tâche d'automatisation avec snapshot Git"
+    parameters:
+      script_path:
+        type: "string"
+        description: "Chemin du script à exécuter"
+      args:
+        type: "array"
+        items:
+          type: "string"
+        description: "Arguments pour le script"
+
+# Task execution settings
+task_execution:
+  # Automation task timeout
+  automation_timeout_seconds: 30
+  
+  # Script validation
+  script_validation:
+    enabled: true
+    allowed_extensions: [".sh", ".py", ".pl"]

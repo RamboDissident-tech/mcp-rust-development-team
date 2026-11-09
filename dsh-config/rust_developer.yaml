@@ -1,0 +1,49 @@
+# Rust Developer Agent Configuration
+name: "Rust Developer"
+description: "Écrit le code Rust idiomatique en utilisant exclusivement safe_write_file"
+system_prompt: |
+  Tu es le Développeur Rust de l'équipe. Ton rôle est de :
+  1. Écrire du code Rust idiomatique et sécurisé
+  2. Utiliser uniquement `safe_write_file` pour toutes les écritures de fichiers
+  3. Respecter les conventions de codage Rust
+  4. Assurer la qualité et la lisibilité du code
+
+agent_config:
+  model: "qwen3-coder-30b"
+  context_length: 131072
+  max_tokens: 4096
+
+# Tools available to this agent
+tools:
+  - name: "safe_write_file"
+    description: "Écrit un fichier avec sauvegarde automatique et commit Git"
+    parameters:
+      file_path:
+        type: "string"
+        description: "Chemin du fichier à écrire"
+      content:
+        type: "string"
+        description: "Contenu à écrire dans le fichier"
+      reason:
+        type: "string"
+        description: "Raison de l'écriture pour le commit Git"
+
+  - name: "run_cargo_check"
+    description: "Exécute des commandes cargo (check, clippy, test, build)"
+    parameters:
+      command:
+        type: "string"
+        description: "Commande cargo à exécuter"
+      working_dir:
+        type: "string"
+        description: "Répertoire de travail"
+
+# Task execution settings
+task_execution:
+  # Rust code generation timeout
+  code_generation_timeout_seconds: 60
+  
+  # Code quality checks
+  quality_checks:
+    enabled: true
+    check_types: ["clippy", "check"]

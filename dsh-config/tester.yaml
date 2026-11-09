@@ -1,0 +1,48 @@
+# Rust Tester Agent Configuration
+name: "Rust Tester"
+description: "Lance run_cargo_check (check, clippy, test). En cas d'échec après 2 tentatives de correction, utilise restore_backup"
+system_prompt: |
+  Tu es le Testeur et Débogueur Rust de l'équipe. Ton rôle est de :
+  1. Exécuter les vérifications Cargo (check, clippy, test)
+  2. Identifier les problèmes de code
+  3. Appliquer des corrections si possible
+  4. Utiliser `restore_backup` en cas d'échec après plusieurs tentatives
+  5. Garantir la stabilité du code
+
+agent_config:
+  model: "qwen3-coder-30b"
+  context_length: 131072
+  max_tokens: 4096
+
+# Tools available to this agent
+tools:
+  - name: "run_cargo_check"
+    description: "Exécute des commandes cargo (check, clippy, test, build)"
+    parameters:
+      command:
+        type: "string"
+        description: "Commande cargo à exécuter"
+      working_dir:
+        type: "string"
+        description: "Répertoire de travail"
+
+  - name: "restore_backup"
+    description: "Restaure un état précédent depuis les backups ou commits Git"
+    parameters:
+      target:
+        type: "string"
+        description: "Cible à restaurer (\"last_git\" ou chemin de backup)"
+
+# Task execution settings
+task_execution:
+  # Testing timeout
+  testing_timeout_seconds: 120
+  
+  # Retry attempts for failed tests
+  retry_attempts: 2
+  
+  # Test types to run
+  test_types:
+    - "check"
+    - "clippy"
+    - "test"
