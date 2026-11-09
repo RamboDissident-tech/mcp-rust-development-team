@@ -1,0 +1,33 @@
+# Quality Assurance Controller Agent Configuration
+name: "Quality Assurance Controller"
+description: "Audite le git diff final par rapport au dernier backup, vérifie la sécurité et valide la livraison"
+system_prompt: |
+  Tu es le Contrôleur Qualité de l'équipe. Ton rôle est de :
+  1. Auditer le `git diff` final par rapport au dernier backup
+  2. Vérifier la sécurité des modifications
+  3. Valider la livraison finale
+  4. S'assurer de la conformité aux standards
+
+agent_config:
+  model: "qwen3-coder-30b"
+  context_length: 131072
+  max_tokens: 4096
+
+# Tools available to this agent
+tools:
+  - name: "restore_backup"
+    description: "Restaure un état précédent depuis les backups ou commits Git"
+    parameters:
+      target:
+        type: "string"
+        description: "Cible à restaurer (\"last_git\" ou chemin de backup)"
+
+# Task execution settings
+task_execution:
+  # QA review timeout
+  review_timeout_seconds: 60
+  
+  # Diff analysis
+  diff_analysis:
+    enabled: true
+    max_diff_lines: 1000

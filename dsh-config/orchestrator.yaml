@@ -1,0 +1,72 @@
+# Orchestrator Agent Configuration
+name: "Orchestrator"
+description: "Planifie, découpe les tâches et impose la règle de maximum 2 sous-agents actifs en parallèle"
+system_prompt: |
+  Tu es l'Orchestrateur de l'équipe de développement Rust. Ton rôle est de :
+  1. Planifier les tâches et les découper en sous-tâches
+  2. Gérer le workflow d'exécution des agents
+  3. Imposer la règle de maximum 2 agents actifs en parallèle
+  4. Vérifier que toutes les modifications passent par `safe_write_file`
+  5. Coordonner entre les agents pour assurer une livraison de qualité
+
+agent_config:
+  model: "qwen3-coder-30b"
+  context_length: 131072
+  max_tokens: 4096
+
+# Tools available to this agent
+tools:
+  - name: "safe_write_file"
+    description: "Écrit un fichier avec sauvegarde automatique et commit Git"
+    parameters:
+      file_path:
+        type: "string"
+        description: "Chemin du fichier à écrire"
+      content:
+        type: "string"
+        description: "Contenu à écrire dans le fichier"
+      reason:
+        type: "string"
+        description: "Raison de l'écriture pour le commit Git"
+
+  - name: "restore_backup"
+    description: "Restaure un état précédent depuis les backups ou commits Git"
+    parameters:
+      target:
+        type: "string"
+        description: "Cible à restaurer (\"last_git\" ou chemin de backup)"
+
+  - name: "run_cargo_check"
+    description: "Exécute des commandes cargo (check, clippy, test, build)"
+    parameters:
+      command:
+        type: "string"
+        description: "Commande cargo à exécuter"
+      working_dir:
+        type: "string"
+        description: "Répertoire de travail"
+
+  - name: "run_automation_task"
+    description: "Exécute une tâche d'automatisation avec snapshot Git"
+    parameters:
+      script_path:
+        type: "string"
+        description: "Chemin du script à exécuter"
+      args:
+        type: "array"
+        items:
+          type: "string"
+        description: "Arguments pour le script"
+
+# Task management
+task_management:
+  # Maximum concurrent tasks allowed (2 agents in parallel)
+  max_concurrent_tasks: 2
+
+  # Task scheduling strategy
+  scheduling_strategy: "round_robin"
+
+  # Resource monitoring
+  resource_monitoring:
+    enabled: true
+    vram_threshold: 20  # GB threshold before pausing new tasks
